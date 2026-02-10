@@ -1,0 +1,122 @@
+<!DOCTYPE html><html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body{margin:0;font-family:Arial;background:#f1f5f9}
+    header{background:#0f172a;color:#fff;padding:15px 20px;display:flex;justify-content:space-between;align-items:center}
+    .sidebar{width:240px;background:#020617;color:#fff;position:fixed;top:60px;bottom:0;padding:15px}
+    .sidebar a{display:block;color:#cbd5f5;text-decoration:none;padding:10px;border-radius:6px;margin-bottom:5px;cursor:pointer}
+    .sidebar a:hover{background:#1e293b}
+    .content{margin-left:260px;padding:20px}
+    .card{background:#fff;border-radius:12px;padding:15px;box-shadow:0 5px 15px rgba(0,0,0,.08);margin-bottom:20px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+    button{padding:8px 12px;border:none;border-radius:6px;background:#2563eb;color:#fff;cursor:pointer}
+    button.red{background:#dc2626}
+    input,select{width:100%;padding:8px;margin-top:6px}
+    .hidden{display:none}
+    .badge{background:#e5e7eb;padding:4px 10px;border-radius:20px;font-size:12px;color:#000}
+    /* LOGIN */
+    .login-box{max-width:360px;margin:120px auto;background:#fff;padding:25px;border-radius:14px;box-shadow:0 10px 25px rgba(0,0,0,.15)}
+  </style>
+</head>
+<body><!-- LOGIN PAGE --><div id="loginPage" class="login-box">
+  <h2>Login Admin</h2>
+  <input id="loginUser" placeholder="Username">
+  <input id="loginPass" type="password" placeholder="Password">
+  <button style="margin-top:10px" onclick="login()">Login</button>
+  <div id="loginError" style="color:red;margin-top:8px"></div>
+</div><!-- APP --><div id="app" class="hidden">
+<header>
+  <b>ADMIN PANEL GAME HIBURAN</b>
+  <div>
+    <span id="role" class="badge"></span>
+    <button class="red" onclick="logout()">Logout</button>
+  </div>
+</header><div class="sidebar">
+  <a onclick="show('dashboard')">📊 Dashboard</a>
+  <a onclick="show('games')">🎮 Manajemen Game</a>
+  <a onclick="show('provider')">🏢 Provider</a>
+  <a onclick="show('player')">👤 Pemain</a>
+  <a onclick="show('finance')">💰 Keuangan</a>
+  <a onclick="show('bonus')">🎁 Bonus & Promo</a>
+  <a onclick="show('admin')" id="adminMenu">🛡️ Admin</a>
+  <a onclick="show('system')" id="systemMenu">⚙️ Sistem</a>
+</div><div class="content"><div id="dashboard" class="card">
+  <h2>Ringkasan Sistem</h2>
+  <div class="grid">
+    <div class="card">Total Game: <b>0</b></div>
+    <div class="card">Game Aktif: <b>0</b></div>
+    <div class="card">Total Pemain: <b>0</b></div>
+    <div class="card">Pendapatan Hari Ini: <b>Rp 0</b></div>
+  </div>
+</div><div id="games" class="card hidden">
+  <h2>Manajemen Semua Permainan</h2>
+  <table width="100%" border="1" cellpadding="8">
+    <tr><th>Game</th><th>Provider</th><th>Status</th><th>RTP</th><th>Aksi</th></tr>
+    <tr><td>Slot Zeus</td><td>Pragmatic</td><td>Aktif</td><td>96%</td><td><button>Nonaktif</button></td></tr>
+  </table>
+</div><div id="provider" class="card hidden">
+  <h2>Provider Game</h2>
+  <input placeholder="Nama Provider">
+  <button>Tambah Provider</button>
+</div><div id="player" class="card hidden">
+  <h2>Manajemen Pemain</h2>
+  <input placeholder="Cari ID / Username">
+  <button>Blokir</button>
+  <button>Reset Saldo</button>
+</div><div id="finance" class="card hidden">
+  <h2>Keuangan</h2>
+  <input placeholder="Minimal Deposit">
+  <input placeholder="Maksimal Withdraw">
+  <button>Simpan</button>
+</div><div id="bonus" class="card hidden">
+  <h2>Bonus & Promosi</h2>
+  <input placeholder="Nama Bonus">
+  <select><option>Bonus Deposit</option><option>Free Spin</option></select>
+  <input placeholder="Persentase">
+  <button>Aktifkan Bonus</button>
+</div><div id="admin" class="card hidden">
+  <h2>Manajemen Admin</h2>
+  <input placeholder="Username">
+  <select><option>super_admin</option><option>operator</option></select>
+  <input placeholder="Password">
+  <button>Tambah Admin</button>
+</div><div id="system" class="card hidden">
+  <h2>Sistem</h2>
+  <button>Maintenance Mode</button>
+  <button class="red">Restart Sistem</button>
+</div></div>
+</div><script>
+const USERS={admin:{password:'admin123',role:'super_admin'},operator:{password:'operator123',role:'operator'}};
+let user=JSON.parse(localStorage.getItem('user'));
+
+function login(){
+  const u=loginUser.value,p=loginPass.value;
+  if(!USERS[u]||USERS[u].password!==p){loginError.innerText='Username atau password salah';return}
+  user={username:u,role:USERS[u].role};
+  localStorage.setItem('user',JSON.stringify(user));
+  init();
+}
+
+function init(){
+  if(!user) return;
+  loginPage.classList.add('hidden');
+  app.classList.remove('hidden');
+  role.innerText=user.role;
+  if(user.role!=='super_admin'){
+    adminMenu.style.display='none';
+    systemMenu.style.display='none';
+  }
+}
+
+function show(id){
+  document.querySelectorAll('.content > div').forEach(d=>d.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+function logout(){localStorage.removeItem('user');location.reload();}
+init();
+</script></body>
+</html>
